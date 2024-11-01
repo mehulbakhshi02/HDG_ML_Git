@@ -1,0 +1,73 @@
+# Petsc V<3.6
+#include ${PETSC_DIR}/conf/variables
+# Petsc V>=3.6
+include ${PETSC_DIR}/lib/petsc/conf/variables
+
+
+# COMPILER FLAGS
+CFLAGS += -fpic -fopenmp
+CFLAGS += -g #-Wall
+#CFLAGS += -DPARALLEL -std=c++11
+
+#COPT += -O3 -march=native -msse -msse2 -msse3 -msse4.2
+#COPT += -funroll-loops -fprefetch-loop-arrays 
+
+# Standard HDG configuration
+CFLAGS += -DHDG
+CFLAGS += -DLAXFRIEDRICH
+#CFLAGS += -DROE
+CFLAGS += -DLOCALDG
+#CFLAGS += -DBR2
+
+CFLAGS += ${SFLAGS}
+
+#CFLAGS += -O3
+CFLAGS += ${COPT}
+CFLAGS += ${PETSC_CC_INCLUDES}
+#CFLAGS += -ftree-vectorizer-verbose=10
+FFLAGS += ${PETSC_FC_INCLUDES}
+
+# LINKER FLAGS FOR MAC
+#LDFLAGS += -bundle -flat_namespace -undefined suppress #-lgfortran
+
+# LINKER FLAGS FOR LINUX
+LDFLAGS += -shared
+
+TOPLEVEL = ./../
+
+# THE FOLLOWING DIRECTORIES NEED TO BE ADAPTED TO YOUR MACHINE
+FORTRAN = 'gfortran'
+
+
+src1 = ../LinearAlgebra/petsc_wrapper.cpp
+src2 = ../main_test.cpp
+
+obj1 = $(src1:%.cpp=%.o)
+obj2 = $(src2:%.cpp=%.o)
+
+.cpp.o:
+	ngscxx -I. -c ${CFLAGS} -L$(TOPLEVEL) $< -o $@ -lpetsc_wrapper ${PETSC_KSP_LIB}
+
+default:
+	echo $(TOPLEVEL)
+	make all -f Makefile_roe_br2
+	
+all:
+	make clean -f Makefile_roe_br2
+	make petsc_wrapper.so -f Makefile_roe_br2
+	make main.so -f Makefile_roe_br2
+	cp main.so main.dylib
+
+netgen:
+	make all
+	netgen -recent
+
+clean:
+	rm -f $(obj1) $(obj2) libpetsc_wrapper.a $(obj2:%.o=%.so) main.so error_data.csv log*.txt ng.prof cell_wise_error_exact.csv
+
+petsc_wrapper.so: $(obj1)
+	ar r libpetsc_wrapper.a ../LinearAlgebra/petsc_wrapper.o
+	ranlib libpetsc_wrapper.a
+
+main.so: $(obj2)
+	ngsld ${LDFLAGS} $(obj2) -L$(TOPLEVEL) -lsolve -lngfem -lngcomp -o $@ table_delaunay_wrapper.o table_tet_wrapper.o -lpetsc_wrapper ${PETSC_KSP_LIB}
