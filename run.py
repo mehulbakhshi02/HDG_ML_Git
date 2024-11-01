@@ -45,15 +45,6 @@ def DeleteFiles():
     subprocess.call('rm adapted_prev.mesh adapted_prev.meshb adapted_surf.tec adapted.b8.ugrid adapted.meshb adapted_geom.tec adapted-final-metric.solb', shell=True)
     # delete some files for hp
     subprocess.call('rm nodeorder*.bb nodeorder*.sol nodeorder*.solb', shell=True)
-    # delete existing solution files (if any)
-    subprocess.call('rm solution-*', shell=True)
-    # delete error csv files
-    subprocess.call('rm cell_wise_*', shell=True)
-    subprocess.call('rm ml_err_*', shell=True)
-    subprocess.call('rm ngs.ini', shell=True)
-    # delete log file
-    subprocess.call('rm mesh-*', shell=True)
-    subprocess.call('rm mldata-*', shell=True)
 
 def replace(filename, string_to_search, replacement_string):
     with fileinput.FileInput(filename, inplace=True, backup='.bak') as file:

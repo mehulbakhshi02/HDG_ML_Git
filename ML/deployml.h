@@ -73,6 +73,19 @@ cout<<"nip_universal: "<<nip_universal<<endl;
     // PyObject* pcollection_func = PyObject_GetAttrString(pModule, "collection_func");
     PyObject* pml_predict = PyObject_GetAttrString(pModule, "output_ml_error_prediction");
 
+
+      // stringstream ml_pred(" ");
+      // ml_pred<< "ml_predict.dat";
+      
+      // ofstream ml_pred_log(ml_pred.str().c_str(), ios::app);
+      // ml_pred_log.precision(16);
+      // ml_pred_log.setf(ios::scientific, ios::floatfield);
+
+
+
+
+
+
     Py_DECREF(pModule); // finished with this module so release reference
     std::cout << "Loaded functions" << std::endl;
  
@@ -105,6 +118,7 @@ cout<<"nip_universal: "<<nip_universal<<endl;
   }
   */
   
+
   for(int i = 0; i < ne; i++)
   {
   // int bc_marker = 0;
@@ -117,7 +131,7 @@ cout<<"nip_universal: "<<nip_universal<<endl;
     ML_FacetData<D, COMP> & ml_fd_1 = *ml_fadata[fcnr];
     int nip_1 = ml_fd_1.nip;
 
-    int input_size =  ml_elidata.ndof_w*(D+1) + nip_1*(D+1)*ml_elidata.nf + (D*(D+1))/2 + Model::NumParam;
+    int input_size =  (ml_elidata.ndof_w*(D+1) + nip_1*(D+1)*ml_elidata.nf)*COMP + (D*(D+1))/2 + Model::NumParam;
     vector<double> input_data(input_size);
     // setting the element parameters // Hard coded for 2D
     input_data[0] = ml_elidata.vol;
@@ -140,6 +154,7 @@ cout<<"nip_universal: "<<nip_universal<<endl;
         input_data[offset+pp+ll*ndof_w] = ml_elidata.vecW[pp+ll*ndof_w];
       }
     }
+
     offset = offset + ndof_w*(COMP);
       // Generating the input data for solution and gradient
     for (int ll = 0; ll < COMP; ++ll)
@@ -224,7 +239,9 @@ cout<<"nip_universal: "<<nip_universal<<endl;
     // PyObject* array_2d = PyArray_SimpleNewFromData(2, dims, NPY_FLOAT64, (double*)Double2DVector.data());
     // Construct the argument tuple
     PyObject* pArgs = PyTuple_New(1);
+    // placing array_2d in first position of the tuple
     PyTuple_SetItem(pArgs, 0, array_2d);
+    // pml_predict (a pointer) values with pArgs argument is being casted to pValue 
     PyArrayObject* pValue = (PyArrayObject*)PyObject_CallObject(pml_predict, pArgs);
     int len{PyArray_SHAPE(pValue)[0]};
     int len2{PyArray_SHAPE(pValue)[1]};
@@ -244,12 +261,13 @@ cout<<"nip_universal: "<<nip_universal<<endl;
       
       for(int qq=0;qq<nip;qq++)
       {
+        // double* current = (double*) PyArray_GETPTR2(pValue, i, qq);
         double* current = (double*) PyArray_GETPTR2(pValue, i, qq);
-        // cout<< (* current)<<endl;
-        double err_exp_loc = exp(*current) ;//* scal; 
-        ml_depldata.w[qq] = pow(err_exp_loc, 1.0/q_norm);
+        double tempcurrent = *current/2.0;
+        double err_exp_loc = exp(tempcurrent*nip) ;//* scal;
+        ml_depldata.w[qq] = err_exp_loc;
+        // ml_depldata.w[qq] = pow(err_exp_loc, 1.0/q_norm);
       }
-   
   }//end of loop over elements
   Py_Finalize();
 }
