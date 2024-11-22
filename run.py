@@ -19,7 +19,7 @@ def MakeNetgenMesh():
 def DeleteFiles():
 
     # Commented by KUNAL
-    subprocess.call('rm bamg_prev.mesh bamg.geo bamg.mesh', shell=True)
+    subprocess.call('rm bamg_prev*.mesh bamg.geo bamg.mesh', shell=True)
 
     # delete bamg files for solution
     subprocess.call('rm *.bb', shell=True)
@@ -28,11 +28,12 @@ def DeleteFiles():
     # delete mmg files
     subprocess.call('rm *.sol adapted.mesh adapted.o.mesh output.msh output.mesh adj_hess_metric.mtr adj_metric.solb bamg.o.mesh', shell=True)
     # delete netgen files
-    subprocess.call('rm netgen_prev.vol ng.ini ng.prof ngmesh.ini netgen.vol netgen.in2d netgen.geo', shell=True)  
+    # subprocess.call('rm netgen_prev.vol ng.ini ng.prof ngmesh.ini netgen.vol netgen.in2d netgen.geo', shell=True)  
     # delete metric related files
     subprocess.call('rm adj_metric.mtr implied_metric.mtr', shell=True)
     # delete solution and log files
-    # subprocess.call('rm error-* log-*.txt', shell=True)
+    subprocess.call('rm error-*', shell=True)
+    # subprocess.call('rm log-*.txt', shell=True)
     # delete data dumps
     subprocess.call('rm error_data.csv int_err.csv cell_wise_error_*.csv max_ratios.csv solution_trial.txt mesh_data.csv error_data_solver.csv coefficients-*.txt', shell=True)
     # delete compilation files
@@ -45,6 +46,8 @@ def DeleteFiles():
     subprocess.call('rm adapted_prev.mesh adapted_prev.meshb adapted_surf.tec adapted.b8.ugrid adapted.meshb adapted_geom.tec adapted-final-metric.solb', shell=True)
     # delete some files for hp
     subprocess.call('rm nodeorder*.bb nodeorder*.sol nodeorder*.solb', shell=True)
+    # delete existing solution files (if any)
+    subprocess.call('rm solution-*', shell=True)
 
 def replace(filename, string_to_search, replacement_string):
     with fileinput.FileInput(filename, inplace=True, backup='.bak') as file:
@@ -284,22 +287,22 @@ def DeployML():
 
     subprocess.call('make clean; make', shell=True)
 
-    subprocess.call('cp Meshes/netgen/square.in2d netgen.in2d', shell=True)
+    subprocess.call('cp Meshes/netgen/visc_subsonic_naca.in2d netgen.in2d', shell=True)
 
     
-    final_size = [128]
+    final_size = [2334]
     # final_size = [32]
     for ne in final_size:
     
     	# KUNAL 
         # I am commenting the next line
-        subprocess.call('cp Meshes/netgen/square'+str(ne)+'.vol netgen.vol', shell=True)
+        subprocess.call('cp Meshes/netgen/visc_subsonic_naca_'+str(ne)+'.vol netgen.vol', shell=True)
         
         # KUNAL
         subprocess.call('cd Scripts; g++ netgen2bamg_ho.cpp -o netgen2bamg_ho', shell=True)
         
         # Write the loops over parameters
-        Calculate(10)
+        Calculate(5)
         subprocess.call("cp cell_wise_ml_err.csv cell_wise_ml_err_"+str(ne)+".csv", shell=True)
         subprocess.call("rm cell_wise_ml_err.csv", shell=True)
         
@@ -314,23 +317,58 @@ def DeployML():
         
 def post_processing():
 
-    print("Creating the NDOF VS Error plot")
-    
-    subprocess.call('cd Post_Processing_Scripts; cp cell_wise_ml_error_all.py ../',shell=True)
+    DeleteFiles()
 
-    subprocess.call('python3 cell_wise_ml_error_all.py',shell=True)
+    print(f"Removing all the old files of in this directory\n")
+    subprocess.call('rm cell_wise_ml_err_*',shell=True)
+    subprocess.call('rm error_data.csv*',shell=True)
+    subprocess.call('rm ml_err_data.csv*',shell=True)
+    subprocess.call('rm netgen_prev.vol ng.ini ng.prof ngmesh.ini netgen.vol netgen.in2d netgen.geo', shell=True)
+    subprocess.call('rm log-*.txt log-*.csv', shell=True)
+    subprocess.call('rm mesh*', shell=True)
 
-    subprocess.call('rm cell_wise_ml_error_all.py',shell=True)
     
-    print("Creating the Element wise ml error plot")
-    
-    subprocess.call('cd Post_Processing_Scripts; cp NDOF_Error_Plot.py ../',shell=True)
+    subprocess.call('make clean; make', shell=True)
 
-    subprocess.call('python3 NDOF_Error_Plot.py',shell=True)
-    
-    subprocess.call('rm NDOF_Error_Plot.py',shell=True)
+    subprocess.call('cp Meshes/netgen/visc_subsonic_naca.in2d netgen.in2d', shell=True)
+    # Initial netgen mesh file
+    subprocess.call('cp Meshes/netgen/visc_subsonic_naca_2334'+'.vol netgen.vol', shell=True)
+    subprocess.call('cd Scripts; g++ netgen2bamg_ho.cpp -o netgen2bamg_ho', shell=True)
 
-    # subprocess.call('cp *.png ../',shell=True)
+
+    nelist = [2698, 3589, 4971, 6866, 9432, 12862]
+    
+    for targetne in nelist:
+        DeleteFiles()
+        print(f"Removing all the old files of in this directory\n")
+        subprocess.call("rm cell_wise_ml_err.csv", shell=True)
+        subprocess.call('rm error_data.csv*',shell=True)
+        subprocess.call('rm ml_err_data.csv*',shell=True)
+
+        pde_file = "test.pde"
+        str_to_find = "define constant dof_target = "
+
+        file = open(pde_file)
+        file_content = file.read()
+        file.close()
+
+        start = file_content.find(str_to_find)
+        end = file_content.find(str_to_find) + len(str_to_find)
+        num_digits = file_content[end:].find("\n")
+        file_content_before = file_content[:end]
+        file_content_after = file_content[end+num_digits:]
+        New_file_content = file_content_before+str(targetne)+file_content_after
+
+        subprocess.call(f"rm {pde_file}",shell =True)
+        file = open(pde_file,"x")
+        file.write(New_file_content)
+        file.close()
+
+        Calculate(5)
+
+        subprocess.call("cp cell_wise_ml_err.csv cell_wise_ml_err_"+str(targetne)+".csv", shell=True)
+        subprocess.call("rm cell_wise_ml_err.csv", shell=True)
+        subprocess.call('cp bamg_prev.mesh bamg_prev_'+str(targetne)+'.mesh', shell=True)
 
 def post_processing_clean():
     print("Removing all the graphs in this folder.\n")
@@ -339,13 +377,13 @@ def post_processing_clean():
 
 
 # DeleteFiles()
-GenerateMLData()
+# GenerateMLData()
 # KUNAL
 # Processing_Data()
 # TrainMLModel()
-# subprocess.call('python3 Deploy_File_Changes.py',shell=True)
+subprocess.call('python3 Deploy_File_Changes.py',shell=True)
 # DeployML()
-# post_processing()
+post_processing()
 # post_processing_clean()
 
 end_time = time.time()

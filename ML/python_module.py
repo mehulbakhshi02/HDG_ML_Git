@@ -93,15 +93,17 @@ def output_ml_error_prediction(input_value):
         # prediction = 0
         # no_epochs = 1
         for i in range(num_stack_model):
-            num_inputs = 60
+            num_inputs = 222
             if i > 0:
                 num_inputs = 49
             model = New_Model(num_inputs)
-            model.load_weights("ML/"+f'best_weights_{i}.h5')
+            model.load_weights(f'best_weights_{i}.weights.h5')
             input_value = model.predict(input_value,batch_size=1)
             # print(preproc_output.inverse_transform(input_value))
         output_value = input_value
         output_value = preproc_output.inverse_transform(output_value)
+        # files = open("ml_pred.dat","w")
+
         # print(output_value.shape)
     else:
         # print(f"ML NOT Deployed: ")
