@@ -39,8 +39,8 @@ def Multiple_Value_Change_in_pde_file(file_name,str_to_find,value):
     
 Files = ["test.pde","test.pde","test.pde","test.pde"]
 
-Strings = ["define constant epsilon = ","define constant alpha = ","define constant beta = ","define constant train = "]
+Strings = ["define constant mach = ","define constant alpha = ","define constant reynolds = ","define constant train = "]
 
-Values = [0.01,2,2,0]
+Values = [0.5,1.0,5000,0]
 
 Multiple_Value_Change_in_pde_file(Files,Strings,Values)

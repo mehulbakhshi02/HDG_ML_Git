@@ -103,7 +103,7 @@ void UnifyingFramework<D, COMP, Model>
   log.precision(16);
   log.setf(ios::scientific, ios::floatfield);
   
-  // log << ne << "," << ndof_w_total;
+  log << ne << "," << ndof_w_total;
   // We have to use the solve ndof because the ndof_w_total is refilled due to p adaptation
   log << nf << "," << ndof_l_solve << "," << pow(ndof_l_solve, 1.0/(double)D);
   double now = get_time();
