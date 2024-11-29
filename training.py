@@ -9,8 +9,7 @@ import matplotlib.pyplot as plt
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import FunctionTransformer
 import joblib
 
 # Build neural network
@@ -95,20 +94,29 @@ def new_r2(y_true, y_pred):
 def New_Model(num_inputs):
     field_input = Input(shape=(num_inputs,),name='inputs')
     hidden_layer_1 = Dense(num_inputs,activation='swish')(field_input)
-    hidden_layer_1 = Dense(60,activation='swish')(hidden_layer_1)
-    hidden_layer_1 = Dense(60,activation='swish')(hidden_layer_1)
-    hidden_layer_1 = Dense(70,activation='relu')(hidden_layer_1)
-    hidden_layer_1 = Dense(80,activation='relu')(hidden_layer_1)
-    hidden_layer_1 = Dense(80,activation='relu')(hidden_layer_1)
-    hidden_layer_1 = Dense(100,activation='tanh')(hidden_layer_1)
-    hidden_layer_1 = Dense(100,activation='tanh')(hidden_layer_1)
-    hidden_layer_1 = Dense(100,activation='tanh')(hidden_layer_1)
-    hidden_layer_1 = Dense(90,activation='relu')(hidden_layer_1)
-    hidden_layer_1 = Dense(80,activation='relu')(hidden_layer_1)
-    hidden_layer_1 = Dense(80,activation='relu')(hidden_layer_1)
-    hidden_layer_1 = Dense(70,activation='swish')(hidden_layer_1)
-    hidden_layer_1 = Dense(70,activation='swish')(hidden_layer_1)
-    hidden_layer_1 = Dense(60,activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(222, activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(222, activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(300, activation='relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(350, activation='leaky_relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(400, activation='relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(450, activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(500, activation='leaky_relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(550, activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(600, activation='relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(550, activation='leaky_relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(500, activation='relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(450, activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(400, activation='leaky_relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(350,activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(300,activation='relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(250,activation='leaky_relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(200,activation='relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(150,activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(100,activation='leaky_relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(80,activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(50,activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(25,activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(10,activation='swish')(hidden_layer_1)
     outputs = Dense(num_outputs,name='outputs')(hidden_layer_1)
     model = Model(inputs=[field_input],outputs=[outputs]) 
     my_adam = optimizers.Adam(learning_rate=0.001)
@@ -132,12 +140,12 @@ if __name__ == '__main__':
     input_data = input_data[idx]
     output_data = output_data[idx]
     # Preprocessing
-    preproc_input = Pipeline([('stdscaler', StandardScaler()),('minmaxscaler', MinMaxScaler())])
+    preproc_input = Pipeline([('passthrough', FunctionTransformer())])
     input_data = preproc_input.fit_transform(input_data)
     scaler_filename = add+f"ip_scaler.save"
     joblib.dump(preproc_input, scaler_filename)
 
-    preproc_output = Pipeline([('stdscaler', StandardScaler()),('minmaxscaler', MinMaxScaler())])
+    preproc_output = Pipeline([('passthrough', FunctionTransformer())])
 
     # KUNAL
     # removing the inf values:

@@ -4,8 +4,7 @@ import tensorflow as tf
 tf.random.set_seed(10)
 import matplotlib.pyplot as plt
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import FunctionTransformer
 import joblib
 
 import fileinput
@@ -47,23 +46,32 @@ def new_r2(y_true, y_pred):
     return r2
     
 def New_Model(num_inputs):
-    num_outputs = 49
+    num_outputs = 1
     field_input = Input(shape=(num_inputs,),name='inputs')
     hidden_layer_1 = Dense(num_inputs,activation='swish')(field_input)
-    hidden_layer_1 = Dense(60,activation='swish')(hidden_layer_1)
-    hidden_layer_1 = Dense(60,activation='swish')(hidden_layer_1)
-    hidden_layer_1 = Dense(70,activation='relu')(hidden_layer_1)
-    hidden_layer_1 = Dense(80,activation='relu')(hidden_layer_1)
-    hidden_layer_1 = Dense(80,activation='relu')(hidden_layer_1)
-    hidden_layer_1 = Dense(100,activation='tanh')(hidden_layer_1)
-    hidden_layer_1 = Dense(100,activation='tanh')(hidden_layer_1)
-    hidden_layer_1 = Dense(100,activation='tanh')(hidden_layer_1)
-    hidden_layer_1 = Dense(90,activation='relu')(hidden_layer_1)
-    hidden_layer_1 = Dense(80,activation='relu')(hidden_layer_1)
-    hidden_layer_1 = Dense(80,activation='relu')(hidden_layer_1)
-    hidden_layer_1 = Dense(70,activation='swish')(hidden_layer_1)
-    hidden_layer_1 = Dense(70,activation='swish')(hidden_layer_1)
-    hidden_layer_1 = Dense(60,activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(222, activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(222, activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(300, activation='relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(350, activation='leaky_relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(400, activation='relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(450, activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(500, activation='leaky_relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(550, activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(600, activation='relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(550, activation='leaky_relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(500, activation='relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(450, activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(400, activation='leaky_relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(350,activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(300,activation='relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(250,activation='leaky_relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(200,activation='relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(150,activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(100,activation='leaky_relu')(hidden_layer_1)
+    hidden_layer_1 = Dense(80,activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(50,activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(25,activation='swish')(hidden_layer_1)
+    hidden_layer_1 = Dense(10,activation='swish')(hidden_layer_1)
     outputs = Dense(num_outputs,name='outputs')(hidden_layer_1)
     model = Model(inputs=[field_input],outputs=[outputs]) 
     my_adam = optimizers.Adam(learning_rate=0.001)
@@ -95,7 +103,7 @@ def output_ml_error_prediction(input_value):
         for i in range(num_stack_model):
             num_inputs = 222
             if i > 0:
-                num_inputs = 49
+                num_inputs = 1
             model = New_Model(num_inputs)
             model.load_weights(f'best_weights_{i}.weights.h5')
             input_value = model.predict(input_value,batch_size=1)
@@ -108,7 +116,7 @@ def output_ml_error_prediction(input_value):
     else:
         # print(f"ML NOT Deployed: ")
         # Hard coded
-        output_value = np.zeros((1,49))
+        output_value = np.zeros((1,1))
     return output_value.astype('float64') # Tensorflow causes cast to float32 - this line reverses it
    
 if __name__ == '__main__':

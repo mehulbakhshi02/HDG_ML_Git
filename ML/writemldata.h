@@ -29,8 +29,8 @@ void UnifyingFramework<D, COMP, Model>
    		ML_ElementData<D, COMP> & ml_elidata = *ml_eldata[i];
     	// if(ml_elidata.nf!=ml_elidata.nf_bc) continue;
 
-    	double normalized_error = log(pow(error[i],2));
-		err_log1 << error[i] << "," << normalized_error/ml_elidata.nip << endl;
+    	double normalized_error = log(error[i]);
+		err_log1 << error[i] << "," << normalized_error << endl;
  	}
 
   	err_log1.close();
@@ -187,7 +187,7 @@ void UnifyingFramework<D, COMP, Model>
 			
 			// Feedforward neural network
 			//err_log << "starting line 2 (boundary element)" << endl;
-			err_log << ml_elidata.nip << "," << (ml_elidata.ndof_w*(D+1) + nip_1*(D+1)*ml_elidata.nf)*COMP + (D*(D+1))/2 + Model::NumParam << "," << ml_elidata.nf_bc << endl;
+			err_log << "1" << "," << (ml_elidata.ndof_w*(D+1) + nip_1*(D+1)*ml_elidata.nf)*COMP + (D*(D+1))/2 + Model::NumParam << "," << ml_elidata.nf_bc << endl;
 			// cout<< "ml_elidata.ndof_w*(D+1): "<< ml_elidata.ndof_w*(D+1) <<endl;
 			
 			// This is the problem
@@ -389,11 +389,8 @@ void UnifyingFramework<D, COMP, Model>
 			//	}
 			//}
 			//err_log << adj_error.size() << endl;
-			double normalized_error = log(pow(error[i],2));
-			for (int j = 0; j < ml_elidata.nip; ++j)
-			{
-			err_log << normalized_error/ml_elidata.nip << endl;
-			}
+			double normalized_error = log(error[i]);
+			err_log << normalized_error << endl;
 
 			
 		}
@@ -418,7 +415,7 @@ void UnifyingFramework<D, COMP, Model>
 			
 			// Feedforward neural network
 			//err_log << "starting line 2 (internal elements)" << endl;
-			err_log << ml_elidata.nip << "," << (ml_elidata.ndof_w*(D+1) + nip_1*(D+1)*ml_elidata.nf)*COMP + (D*(D+1))/2 + Model::NumParam << "," << ml_elidata.nf_bc << endl;
+			err_log << "1" << "," << (ml_elidata.ndof_w*(D+1) + nip_1*(D+1)*ml_elidata.nf)*COMP + (D*(D+1))/2 + Model::NumParam << "," << ml_elidata.nf_bc << endl;
 
 			//err_log << "volume, beta, theta (internal elements)" << endl;
 			err_log << ml_elidata.vol << endl << ml_elidata.beta << endl << ml_elidata.theta << endl;
@@ -532,11 +529,8 @@ void UnifyingFramework<D, COMP, Model>
 			// 			//cout<<"pw_out[ll]: Internal Element: "<< pw_out[ll] <<endl;    
 			// 	}
 			// }
-			double normalized_error = log(pow(error[i],2));
-			for (int j = 0; j < ml_elidata.nip; ++j)
-			{
-			err_log << normalized_error/ml_elidata.nip << endl;
-			}
+			double normalized_error = log(error[i]);
+			err_log << normalized_error << endl;
 		}
 
 	}//end of loop over elements

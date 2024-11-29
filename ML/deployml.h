@@ -263,8 +263,8 @@ cout<<"nip_universal: "<<nip_universal<<endl;
       {
         // double* current = (double*) PyArray_GETPTR2(pValue, i, qq);
         double* current = (double*) PyArray_GETPTR2(pValue, i, qq);
-        double tempcurrent = *current/2.0;
-        double err_exp_loc = exp(tempcurrent*nip) ;//* scal;
+        double tempcurrent = *current;
+        double err_exp_loc = exp(tempcurrent) ;//* scal;
         ml_depldata.w[qq] = err_exp_loc;
         // ml_depldata.w[qq] = pow(err_exp_loc, 1.0/q_norm);
       }

@@ -19,6 +19,15 @@ void UnifyingFramework<D, COMP, Model>
   adj.vecW.assign(ndof_w_total * COMP, 0.);
   adj.vecL.assign(ndof_l_total * COMP, 0.);
 
+  // Load adjoint solution
+  cout << "Loading adjoint solution" << endl;
+  bool loaded = false;
+  stringstream ossadj(" ");
+  ossadj << "solution-adjoint-" << ne << "-" << max_order;
+  Model::GetFilename(ossadj);
+
+  loaded = LoadSolution(ossadj.str(), adj);
+
   Solution sol = adj;
 
   ProlongateOrder(sol_old, sol, 1);
