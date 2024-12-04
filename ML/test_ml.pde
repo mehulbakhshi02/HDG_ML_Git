@@ -104,7 +104,7 @@ define constant c_max = 5
 
 define constant excoe_ani_tol = 1e+40
 # 0 - Mesh fraction, 1 - Analytic optimization, 2 - Numerical optimization
-define constant opt_strategy = 0
+define constant opt_strategy = 1
 
 ################################ PROJECTION BASIS ###############################
 
