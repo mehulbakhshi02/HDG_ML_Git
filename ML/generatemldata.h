@@ -458,8 +458,8 @@ cout << "deploy " << MLParameters::deploy << endl;
     const double * pw_err  = &ml_depldata.w[j * COMP];  
     // cout<<i<<" "<<j<<" "<<pw_err[0]<<endl;
     // At each quadrature point we have pw[0] = u-u_h from the deployed ML
-    // loc_err += (pw_err[0]*pw_err[0])*qw;
-    loc_err += pw_err[0];
+    loc_err += (pw_err[0]*pw_err[0])*qw;
+    // loc_err += pw_err[0];
   }
     // loc_err = ml_depldata.error;
     err_dep += loc_err;
