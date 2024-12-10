@@ -203,7 +203,7 @@ def GenerateMLData():
 
     subprocess.call('cp Meshes/netgen/square.in2d netgen.in2d', shell=True)
 
-    mesh_sizes = ["2048"]
+    mesh_sizes = ["128"]
     
     N = 10
     

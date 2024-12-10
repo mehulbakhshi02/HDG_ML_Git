@@ -1,8 +1,8 @@
 ################################ FLOW PARAMETERS ################################
 
-define constant epsilon = 0.01
-define constant alpha = 2.0
-define constant beta = 2.0
+define constant epsilon = 0.1
+define constant alpha = 1.0
+define constant beta = 1.0
 
 ################################ DISCRETIZATION PARAMETERS ######################
 
@@ -66,7 +66,7 @@ define constant save_bamg_solution = 0
 define constant write_cellwise_err = 0
 
 define constant dof_control = 1
-define constant dof_target = 200
+define constant dof_target = 2000
 define constant comp_der = 0
 define constant limit_metric = 0
 define constant beta_max = 1.0
