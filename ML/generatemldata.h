@@ -451,15 +451,17 @@ cout << "deploy " << MLParameters::deploy << endl;
     // mygemm('t', 'n', COMP, nip, ndof_w, 1., &ml_depldata.vecW[0], &ed.phi[0], 0., &w_err[0]);
 
     double loc_err = 0.0;
-    for (int j = 0; j < ed.nip; ++j) {
+    //Mehul
+    //for (int j = 0; j < ed.nip; ++j) { // No nip loop for adjoint based error
+    for (int j = 0; j < 1; ++j) {
 
     const double   qw  = ed.qw[j];
     // const double * pw_err  = &w_err[j * COMP];
-    const double * pw_err  = &ml_depldata.w[j * COMP];  
+    const double * pw_err  = &ml_depldata.w[j * COMP];   // for adjoint based j*COMP will be 0
     // cout<<i<<" "<<j<<" "<<pw_err[0]<<endl;
     // At each quadrature point we have pw[0] = u-u_h from the deployed ML
-    loc_err += (pw_err[0]*pw_err[0])*qw;
-    // loc_err += pw_err[0];
+    // loc_err += (pw_err[0]*pw_err[0])*qw;
+    loc_err += pw_err[0];
   }
     // loc_err = ml_depldata.error;
     err_dep += loc_err;

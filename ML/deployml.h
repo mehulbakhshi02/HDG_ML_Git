@@ -243,6 +243,8 @@ cout<<"nip_universal: "<<nip_universal<<endl;
     PyTuple_SetItem(pArgs, 0, array_2d);
     // pml_predict (a pointer) values with pArgs argument is being casted to pValue 
     PyArrayObject* pValue = (PyArrayObject*)PyObject_CallObject(pml_predict, pArgs);
+
+    PyErr_Print();
     int len{PyArray_SHAPE(pValue)[0]};
     int len2{PyArray_SHAPE(pValue)[1]};
     
@@ -250,13 +252,19 @@ cout<<"nip_universal: "<<nip_universal<<endl;
     cout<<"len2: " <<len2 <<endl;
   
   cout << "Double2DVector: Filled" << endl;
+
+  vector<double> testing(ne, 0.0);
+
   for(int i = 0; i < ne; i++)
   {
     // cout<<"Element Number: " <<i <<endl;
     
     ML_DeployData<D, COMP> & ml_depldata = *ml_deploydata[i];
 
-    int nip = ml_depldata.nip;
+    // Mehul
+    // int nip = ml_depldata.nip;
+    int nip = 1; // there is no nip for adjoint based error
+
       // double scal = pow(ml_elidata.h, q_norm*(max_order+1)); //h^r*(p+1)
       
       for(int qq=0;qq<nip;qq++)
@@ -269,5 +277,6 @@ cout<<"nip_universal: "<<nip_universal<<endl;
         // ml_depldata.w[qq] = pow(err_exp_loc, 1.0/q_norm);
       }
   }//end of loop over elements
+
   Py_Finalize();
 }
